@@ -11,8 +11,8 @@
         
         <form class="form-inline">
           <div class="form-group">
-            <label name="">Person</label>
-            <a href="{{ url('/add') }}"><button type="button" class="btn btn-primary">Primary</button></a>
+            <label><h3>Person </h3></label>
+            <a href="{{ url('/add') }}"><button type="button" class="btn btn-primary">Add Data</button></a>
           </div>
         </form>
     </div>
@@ -31,6 +31,7 @@
                 <th>Department</th>
                 <th>Avatar</th>
                 <th>Status</th>
+                <th></th>
             </tr>
         </thead>
         <tbody>
@@ -52,6 +53,11 @@
                     @else
                         <h4><p class="label label-default round">Libur<p></h4>
                     @endif
+                </td>
+                <td>
+                    <a href="{{ url('delete', $data['id']) }}">
+                        <button type="button" class="btn btn-danger btn-sm"><span class="glyphicon glyphicon-trash"></span> </button>
+                    </a>
                 </td>
             </tr>
             @endforeach

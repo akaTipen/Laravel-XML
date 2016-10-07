@@ -1,9 +1,9 @@
 $(document).ready(function() {
-    $grouping(1);
+    $grouping(3);
 
     $("#active").click(function(){
-        $("#inactive").removeClass().addClass("active");
-        $("#active").removeClass().addClass("inactive");
+        $("#inactive").removeClass().addClass("inactive");
+        $("#active").removeClass().addClass("active");
         $grouping(3);
     })
 
@@ -12,6 +12,10 @@ $(document).ready(function() {
         $("#active").removeClass().addClass("inactive");
         $grouping(1);
     })
+
+    $("#delete").click(function(){
+        return confirm("Are you sure you want to delete?");
+    })    
 
 } );
 
@@ -29,7 +33,7 @@ $grouping = function(a) {
             api.column(a, {page:'current'} ).data().each( function ( group, i ) {
                 if ( last !== group ) {
                     $(rows).eq( i ).before(
-                        '<tr class="success"><td class="blue" colspan="6">'+group+'</td></tr>'
+                        '<tr class="success"><td class="blue" colspan="7">'+group+'</td></tr>'
                     );
  
                     last = group;
@@ -38,4 +42,3 @@ $grouping = function(a) {
         }
     } );
 }
-

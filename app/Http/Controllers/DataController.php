@@ -8,6 +8,8 @@ use App\Http\Requests;
 
 use Illuminate\Support\Facades\Input;
 
+use Illuminate\Support\Facades\File;
+
 use App\Data;
 
 class DataController extends Controller
@@ -155,7 +157,47 @@ class DataController extends Controller
      */
     public function destroy($id)
     {
-        
+    	/**
+	    *
+		* Using DomXML
+		*
+		*/
+  		$document = new \DomDocument('1.0');
+		$document->load('data.xml');
+
+		$xpath = new \DOMXpath($document);
+
+		// Use XPath to locate our node(s)
+		$nodelist = $xpath->query('.//field[@name="id"][.=' . $id . ']/..', $document->documentElement);
+
+		// Iterate over our node list and remove the data
+		foreach ($nodelist as $dataNode) {
+		    if ($dataNode->parentNode === null) {
+		        continue;
+		    }
+
+		    // Get the data node parent (file) so we can call remove child
+		    $dataNode->parentNode->removeChild($dataNode);
+		}
+
+		$document->save('data.xml');	
+
+	   /**
+	    *
+		* Using SimpleXML
+		*
+		*/
+		// $xml = new \SimpleXMLElement(file_get_contents('data.xml'));
+		// $data = $xml->xpath('//field[@name="id"][.=' . $id . ']/..');
+
+		// if (isset($data[0])) {
+		//     unset($data[0]->{0});
+		// }
+
+		// $xml->asXML('data.xml');
+
+
+		// File::delete($img .'/'. $avatar);
 
         return redirect()->to('/');
     }
