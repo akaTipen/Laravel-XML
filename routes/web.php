@@ -20,3 +20,5 @@ Route::get('/', 'DataController@index');
 Route::get('/add', 'DataController@create');
 Route::post('/store', 'DataController@store');
 Route::get('/delete/{id}', 'DataController@destroy');
+Route::get('/edit/{id}', 'DataController@edit');
+Route::put('/update/{id}', 'DataController@update');

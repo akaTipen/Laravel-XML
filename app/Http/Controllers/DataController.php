@@ -82,71 +82,167 @@ class DataController extends Controller
         $lastArray = end($datas);
         $lastId = $lastArray['id'];
 
-       	if(input::hasFile('avatar')) {
-
-       		$file = Input::file('avatar');
-       		$destinationPath = public_path().'/img';
+        if(input::hasFile('avatar')) {
+	   		$file = Input::file('avatar');
+	   		$destinationPath = public_path().'/img';
 	    	$filename = $file->getClientOriginalname();
-
-	        $data = $dom->getElementsByTagName('data')->item(0);
-	        $row = $dom->createElement('row');
-	        
-	        $id = $dom->createElement('field', $lastId+1);
-	        $idAttribute = $dom->createAttribute('name');
-	        $idAttribute->value = 'id';
-	        $id->appendChild($idAttribute);
-
-	        $name = $dom->createElement('field', $request['name']);
-	        $nameAttribute = $dom->createAttribute('name');
-	        $nameAttribute->value = 'name';
-	        $name->appendChild($nameAttribute);
-
-	        $position = $dom->createElement('field', $request['position']);
-	        $positionAttribute = $dom->createAttribute('name');
-	        $positionAttribute->value = 'position';
-	        $position->appendChild($positionAttribute);
-
-	        $city = $dom->createElement('field', $request['city']);
-	        $cityAttribute = $dom->createAttribute('name');
-	        $cityAttribute->value = 'city';
-	        $city->appendChild($cityAttribute);
-
-	        $email = $dom->createElement('field', $request['email']);
-	        $emailAttribute = $dom->createAttribute('name');
-	        $emailAttribute->value = 'email';
-	        $email->appendChild($emailAttribute);
-
-	        $department = $dom->createElement('field', $request['department']);
-	        $departmentAttribute = $dom->createAttribute('name');
-	        $departmentAttribute->value = 'department';
-	        $department->appendChild($departmentAttribute);
-
-	        $avatar = $dom->createElement('field', 'img/'.$filename);
-	        $avatarAttribute = $dom->createAttribute('name');
-	        $avatarAttribute->value = 'avatar';
-	        $avatar->appendChild($avatarAttribute);
-
-	        $status = $dom->createElement('field', $request['status']);
-	        $statusAttribute = $dom->createAttribute('name');
-	        $statusAttribute->value = 'status';
-	        $status->appendChild($statusAttribute);
-
-	       	$data->appendChild($row);
-	       	$row->appendChild($id);
-	       	$row->appendChild($name);
-	       	$row->appendChild($position);
-	       	$row->appendChild($city);
-	       	$row->appendChild($email);
-	       	$row->appendChild($department);
-	       	$row->appendChild($avatar);
-	       	$row->appendChild($status);
-
-	 		$dom->save('data.xml');	    	
+	    	$fileXML = 'img/'.$filename;
 
 	    	$file->move($destinationPath, $filename);	
-        }
+    	} else {
+    		$fileXML = null;
+    	}
+
+        $data = $dom->getElementsByTagName('data')->item(0);
+        $row = $dom->createElement('row');
+        
+        $id = $dom->createElement('field', $lastId+1);
+        $idAttribute = $dom->createAttribute('name');
+        $idAttribute->value = 'id';
+        $id->appendChild($idAttribute);
+
+        $name = $dom->createElement('field', $request['name']);
+        $nameAttribute = $dom->createAttribute('name');
+        $nameAttribute->value = 'name';
+        $name->appendChild($nameAttribute);
+
+        $position = $dom->createElement('field', $request['position']);
+        $positionAttribute = $dom->createAttribute('name');
+        $positionAttribute->value = 'position';
+        $position->appendChild($positionAttribute);
+
+        $city = $dom->createElement('field', $request['city']);
+        $cityAttribute = $dom->createAttribute('name');
+        $cityAttribute->value = 'city';
+        $city->appendChild($cityAttribute);
+
+        $email = $dom->createElement('field', $request['email']);
+        $emailAttribute = $dom->createAttribute('name');
+        $emailAttribute->value = 'email';
+        $email->appendChild($emailAttribute);
+
+        $department = $dom->createElement('field', $request['department']);
+        $departmentAttribute = $dom->createAttribute('name');
+        $departmentAttribute->value = 'department';
+        $department->appendChild($departmentAttribute);
+
+        $avatar = $dom->createElement('field', $fileXML);
+        $avatarAttribute = $dom->createAttribute('name');
+        $avatarAttribute->value = 'avatar';
+        $avatar->appendChild($avatarAttribute);
+
+        $status = $dom->createElement('field', $request['status']);
+        $statusAttribute = $dom->createAttribute('name');
+        $statusAttribute->value = 'status';
+        $status->appendChild($statusAttribute);
+
+       	$data->appendChild($row);
+       	$row->appendChild($id);
+       	$row->appendChild($name);
+       	$row->appendChild($position);
+       	$row->appendChild($city);
+       	$row->appendChild($email);
+       	$row->appendChild($department);
+       	$row->appendChild($avatar);
+       	$row->appendChild($status);
+
+ 		$dom->save('data.xml');	    	
          
          return redirect()->to('/');
+    }
+
+    /**
+     * Show the form for editing the specified resource.
+     *
+     * @param  int  $id
+     *
+     * @return \Illuminate\View\View
+     */
+    public function edit($id)
+    {
+        // $post = Post::findOrFail($id);
+
+        /**
+	    *
+		* Using DomXML
+		*
+		*/
+  		$document = new \DomDocument('1.0');
+		$document->load('data.xml');
+
+		$xpath = new \DOMXpath($document);
+
+		$name = $xpath->query('./row[field[@name="id"] ='.$id.']/field[@name="name"]');
+		$position = $xpath->query('./row[field[@name="id"] ='.$id.']/field[@name="position"]');
+		$city = $xpath->query('./row[field[@name="id"] ='.$id.']/field[@name="city"]');
+		$email = $xpath->query('./row[field[@name="id"] ='.$id.']/field[@name="email"]');
+		$department = $xpath->query('./row[field[@name="id"] ='.$id.']/field[@name="department"]');
+		$avatar = $xpath->query('./row[field[@name="id"] ='.$id.']/field[@name="avatar"]');
+		$status = $xpath->query('./row[field[@name="id"] ='.$id.']/field[@name="status"]');
+
+		$row = array('id'=>$id, 'name'=>$name['domnodelist']->textContent, 'position'=>$position['domnodelist']->textContent, 'city'=>$city['domnodelist']->textContent,
+			'email'=>$email['domnodelist']->textContent, 'department'=>$department['domnodelist']->textContent, 'avatar'=>$avatar['domnodelist']->textContent, 'status'=>$status['domnodelist']->textContent);
+
+		// print_r($row);die;
+
+        return view('edit')->with('row', $row);
+    }
+
+    /**
+     * Update the specified resource in storage.
+     *
+     * @param  int  $id
+     * @param \Illuminate\Http\Request $request
+     *
+     * @return \Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
+     */
+    public function update($id, Request $request)
+    {
+    	$document = new \DomDocument('1.0');
+		$document->load('data.xml');
+
+		$xpath = new \DOMXpath($document);
+
+        $delete = $xpath->query('./row[field[@name="id"] ='.$id.']/field[@name="avatar"]');
+
+        if(input::hasFile('avatar')) {
+            $file = Input::file('avatar');
+            $destinationPath = public_path().'/img';
+            $filename = $file->getClientOriginalname();
+            $fileXML = 'img/'.$filename;
+
+            File::delete($delete['domnodelist']->textContent);  
+            $file->move($destinationPath, $filename); 
+        } else {
+            $fileXML = null;
+        }	 
+        
+        $requestData = $request->all();
+
+        $name = $xpath->query('./row[field[@name="id"] ='.$id.']/field[@name="name"]');
+        $name['domnodelist']->nodeValue = $request['name'];
+
+        $position = $xpath->query('./row[field[@name="id"] ='.$id.']/field[@name="position"]');
+        $position['domnodelist']->nodeValue = $request['position'];
+
+		$city = $xpath->query('./row[field[@name="id"] ='.$id.']/field[@name="city"]');
+		$city['domnodelist']->nodeValue = $request['city'];
+
+		$email = $xpath->query('./row[field[@name="id"] ='.$id.']/field[@name="email"]');
+		$email['domnodelist']->nodeValue = $request['email'];
+
+		$department = $xpath->query('./row[field[@name="id"] ='.$id.']/field[@name="department"]');
+		$department['domnodelist']->nodeValue = $request['department'];
+
+		$avatar = $xpath->query('./row[field[@name="id"] ='.$id.']/field[@name="avatar"]');
+		$avatar['domnodelist']->nodeValue = $fileXML;
+
+		$status = $xpath->query('./row[field[@name="id"] ='.$id.']/field[@name="status"]');
+		$status['domnodelist']->nodeValue = $request['status'];
+
+		$document->save('data.xml');	
+
+        return redirect('/');
     }
 
     /**
@@ -168,7 +264,9 @@ class DataController extends Controller
 		$xpath = new \DOMXpath($document);
 
 		// Use XPath to locate our node(s)
-		$nodelist = $xpath->query('.//field[@name="id"][.=' . $id . ']/..', $document->documentElement);
+		$nodelist = $xpath->query('.//field[@name="id"][.='.$id.']/..');
+
+		$avatar = $xpath->query('./row[field[@name="id"] ='.$id.']/field[@name="avatar"]');
 
 		// Iterate over our node list and remove the data
 		foreach ($nodelist as $dataNode) {
@@ -197,7 +295,7 @@ class DataController extends Controller
 		// $xml->asXML('data.xml');
 
 
-		// File::delete($img .'/'. $avatar);
+		File::delete($avatar['domnodelist']->textContent);
 
         return redirect()->to('/');
     }

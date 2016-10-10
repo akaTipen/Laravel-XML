@@ -7,12 +7,10 @@
 <div class="row">
     <div class="col-md-12 centered">  
     <div class="col-md-8">
-       <!--  <a href="{{ url('/add') }}" class="btn btn-primary btn-xs" title="Add New Post"><span class="glyphicon glyphicon-plus" aria-hidden="true"/></a> -->
-        
         <form class="form-inline">
           <div class="form-group">
             <label><h3>Person </h3></label>
-            <a href="{{ url('/add') }}"><button type="button" class="btn btn-primary">Add Data</button></a>
+            <a href="{{ url('/add') }}"><button type="button" class="btn btn-success">Add Data</button></a>
           </div>
         </form>
     </div>
@@ -55,8 +53,11 @@
                     @endif
                 </td>
                 <td>
+                    <a href="{{ url('edit', $data['id']) }}">
+                        <button type="button" class="btn btn-primary btn-sm"><span class="glyphicon glyphicon-pencil"></span></button>
+                    </a>
                     <a href="{{ url('delete', $data['id']) }}">
-                        <button type="button" class="btn btn-danger btn-sm"><span class="glyphicon glyphicon-trash"></span> </button>
+                        <button type="button" class="btn btn-danger btn-sm"><span class="glyphicon glyphicon-trash"></span></button>
                     </a>
                 </td>
             </tr>
